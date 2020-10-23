@@ -41,9 +41,10 @@
         fallbackClasses: false,
         returnFunction: true,
     });
-    // Components is object as it will be public.
-    const components = Object.create(null);
-    function module(name, f) {
+
+    return function component(name, f) {
+        // Components is object as it will be public.
+        const components = Object.create(null);
         // Same for this.
         const cssClassNames = Object.create(null);
         const css = (a) =>
@@ -72,7 +73,19 @@
         const c = s.returnFunction ? () => f(css, $) : f(css, $);
         components[name] = c;
         return c;
-    }
-    module.components = components;
-    return module;
+    };
 });
+
+/*
+Usage:
+```
+const style = require('./style.css');
+const other = require('./other.js');
+
+module.exports = component('This', (css, use, $) => {
+    css(style); // or use(style);
+    use(other);
+    $.other.styledClass(...);
+});
+```
+*/
