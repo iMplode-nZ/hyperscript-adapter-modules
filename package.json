@@ -4,7 +4,7 @@
   "description": "A package for modules that use hyperscript-adapter. Supports CSS modules and various CSS in JS tools.",
   "main": "index.js",
   "scripts": {
-    "build": "uglifyjs -c -m --source-map url=index.min.js.map -o index.min.js -- index.js"
+    "build": "terser -c -m --source-map url=index.min.js.map -o index.min.js -- index.js"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
     "url": "https://github.com/iMplode-nZ/hyperscript-adapter-modules/issues"
   },
   "homepage": "https://github.com/iMplode-nZ/hyperscript-adapter-modules#readme",
-  "devDependencies": {
-    "uglify-js": "github:mishoo/UglifyJS2#harmony"
+  "dependencies": {
+    "terser": "^5.3.8"
   }
 }

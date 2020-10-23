@@ -39,16 +39,18 @@
     }
     const s = withDefaults(settings, {
         fallbackClasses: false,
-        partialBind: true,
+        partialBind: false,
     });
 
-    return function component(name, f) {
+    const globalComponents = Object.create(null);
+    function mod(name, f) {
         // Components is object as it will be public.
-        const components = Object.create(null);
+        const components = Object.create(mod.globalComponents);
         // Same for this.
         const cssClassNames = Object.create(null);
         const css = (a) =>
             Object.entries(a).forEach(([x, y]) => (cssClassNames[x] = y));
+        const use = (c) => (components[c.name] = c.component);
         css.classes = cssClassNames;
         const $ = HTML({
             resolvers: {
@@ -66,14 +68,20 @@
                 },
                 tagResolver: (_tag, toKebabCase, opt) => {
                     const tag = opt.hyphenate.tag ? toKebabCase(_tag) : _tag;
-                    return components[tag] ?? tag;
+                    return components[tag] || tag;
                 },
             },
         });
-        const c = s.partialBind ? (...args) => f(css, $, ...args) : f(css, $);
-        components[name] = c;
-        return c;
+        const c = s.partialBind
+            ? (...args) => f(css, use, $, ...args)
+            : f(css, use, $);
+        return { name, component: c };
+    }
+    mod.globalComponents = globalComponents;
+    mod.addGlobal = (c) => {
+        globalComponents[c.name] = c.component;
     };
+    return mod;
 });
 
 /*
@@ -82,7 +90,7 @@ Usage:
 const style = require('./style.css');
 const other = require('./other.js');
 
-module.exports = component('This', (css, use, $) => {
+module.exports = mod('This', (css, use, $) => {
     css(style); // or use(style);
     use(other);
     $.other.styledClass(...);
