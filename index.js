@@ -39,7 +39,7 @@
     }
     const s = withDefaults(settings, {
         fallbackClasses: false,
-        returnFunction: true,
+        partialBind: true,
     });
 
     return function component(name, f) {
@@ -70,7 +70,7 @@
                 },
             },
         });
-        const c = s.returnFunction ? () => f(css, $) : f(css, $);
+        const c = s.partialBind ? (...args) => f(css, $, ...args) : f(css, $);
         components[name] = c;
         return c;
     };
