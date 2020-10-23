@@ -19,9 +19,9 @@
             exports = module.exports = factory;
     } else {
         // Browser globals
-        root.HTMLModuleTypeCreator = factory;
+        root.HTMLModuleCreator = factory;
     }
-})(typeof self !== 'undefined' ? self : this, (HTML, settings) => {
+})(typeof self !== 'undefined' ? self : this, (HTML, settings = {}) => {
     function withDefaults(obj, def) {
         return new Proxy(obj, {
             get(_, prop) {

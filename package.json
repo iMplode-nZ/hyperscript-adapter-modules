@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A package for modules that use hyperscript-adapter. Supports CSS modules and various CSS in JS tools.",
   "main": "index.js",
+  "browser": true,
   "scripts": {
     "build": "terser -c -m --source-map url=index.min.js.map -o index.min.js -- index.js"
   },
@@ -22,7 +23,10 @@
     "url": "https://github.com/iMplode-nZ/hyperscript-adapter-modules/issues"
   },
   "homepage": "https://github.com/iMplode-nZ/hyperscript-adapter-modules#readme",
-  "dependencies": {
+  "devDependencies": {
     "terser": "^5.3.8"
+  },
+  "peerDependencies": {
+    "hyperscript-adapter": "*"
   }
 }
