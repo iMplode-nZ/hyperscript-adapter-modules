@@ -41,6 +41,7 @@
         fallbackClasses: false,
         partialApply: false,
         hyphenatedComponents: false,
+        hyphenatedClasses: true,
     });
 
     const globalComponents = Object.create(null);
@@ -56,11 +57,13 @@
         const $ = HTML({
             resolvers: {
                 classResolver: (_cl, toKebabCase, opt) => {
-                    const cl = opt.hyphenate.classes ? toKebabCase(_cl) : _cl;
+                    const cl = s.hyphenatedClasses ? toKebabCase(_cl) : _cl;
                     const m = cssClassNames[cl];
                     if (m === undefined) {
                         if (s.fallbackClasses) {
-                            return cl;
+                            return opt.hyphenate.classes
+                                ? toKebabCase(_cl)
+                                : _cl;
                         } else {
                             throw new Error(`Cannot find class name ${cl}.`);
                         }

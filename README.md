@@ -70,6 +70,10 @@ mod('name', (css, mod, $) => (argOne, argTwo) => doStuff());
 
 This setting controls whether component creation is hyphenated. If this is activated, `$.fooBar` would reference the component with name `foo-bar` instead of the component with name `fooBar`.
 
+### `hyphenatedClasses: true`
+
+This setting controls whether to hyphenate classes loaded with `css`. If `true`, it will query based on the hyphenated version of the input class. For example, `fooBar` would become `foo-bar`.
+
 ## Initialization
 
 The exported `HTMLModuleCreator` is a function that takes in the current `HTML` instance and an object of settings and outputs the actual module creator function.

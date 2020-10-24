@@ -24,6 +24,7 @@ const mod = HTMLModuleCreator(HTML2);
 const stylesheet = {
     foo: 'foo-hash',
     bar: 'bar-hash',
+    'hyphen-test': 'hyphenated',
 };
 const SomeComponent = mod('SomeComponent', (css, use, $) => {
     css(stylesheet);
@@ -40,6 +41,10 @@ deepEq(OtherComponent, {
         {},
     ],
 }); // No need to eq SomeComponent.
+mod('___', (css, use, $) => {
+    css(stylesheet);
+    return $.div.hyphenTest();
+});
 try {
     mod('___', (css, use, $) => {
         return $.div.foo();
@@ -53,6 +58,7 @@ const mod2 = HTMLModuleCreator(HTML2, {
     fallbackClasses: true,
     partialApply: true,
     hyphenatedComponents: true,
+    hyphenatedClasses: false,
 });
 const ComponentA = mod2('component-a', (css, use, $) => {
     css(stylesheet);
