@@ -39,7 +39,8 @@
     }
     const s = withDefaults(settings, {
         fallbackClasses: false,
-        partialBind: false,
+        partialApply: false,
+        hyphenatedComponents: false,
     });
 
     const globalComponents = Object.create(null);
@@ -68,11 +69,13 @@
                 },
                 tagResolver: (_tag, toKebabCase, opt) => {
                     const tag = opt.hyphenate.tag ? toKebabCase(_tag) : _tag;
-                    return components[tag] || tag;
+                    return (
+                        components[s.hyphenatedComponents ? tag : _tag] || tag
+                    );
                 },
             },
         });
-        const c = s.partialBind
+        const c = s.partialApply
             ? (...args) => f(css, use, $, ...args)
             : f(css, use, $);
         return { name, component: c };
