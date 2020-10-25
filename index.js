@@ -10,13 +10,9 @@
         try {
             define(f);
         } catch (e) {}
-    } else if (
-        typeof exports === 'object' &&
-        typeof exports.nodeName !== 'string'
-    ) {
+    } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
         // CommonJS
-        if (typeof module === 'object' && typeof module.exports === 'object')
-            exports = module.exports = factory;
+        if (typeof module === 'object' && typeof module.exports === 'object') exports = module.exports = factory;
     } else {
         // Browser globals
         root.HTMLModuleCreator = factory;
@@ -42,6 +38,7 @@
         partialApply: false,
         hyphenatedComponents: false,
         hyphenatedClasses: true,
+        useDefault: false,
     });
 
     const globalComponents = Object.create(null);
@@ -50,8 +47,7 @@
         const components = Object.create(mod.globalComponents);
         // Same for this.
         const cssClassNames = Object.create(null);
-        const css = (a) =>
-            Object.entries(a).forEach(([x, y]) => (cssClassNames[x] = y));
+        const css = (a) => Object.entries(s.useDefault ? a.default : a).forEach(([x, y]) => (cssClassNames[x] = y));
         const use = (c) => (components[c.name] = c.component);
         css.classes = cssClassNames;
         const $ = HTML({
@@ -61,9 +57,7 @@
                     const m = cssClassNames[cl];
                     if (m === undefined) {
                         if (s.fallbackClasses) {
-                            return opt.hyphenate.classes
-                                ? toKebabCase(_cl)
-                                : _cl;
+                            return opt.hyphenate.classes ? toKebabCase(_cl) : _cl;
                         } else {
                             throw new Error(`Cannot find class name ${cl}.`);
                         }
@@ -72,15 +66,11 @@
                 },
                 tagResolver: (_tag, toKebabCase, opt) => {
                     const tag = opt.hyphenate.tag ? toKebabCase(_tag) : _tag;
-                    return (
-                        components[s.hyphenatedComponents ? tag : _tag] || tag
-                    );
+                    return components[s.hyphenatedComponents ? tag : _tag] || tag;
                 },
             },
         });
-        const c = s.partialApply
-            ? (...args) => f(css, use, $, ...args)
-            : f(css, use, $);
+        const c = s.partialApply ? (...args) => f(css, use, $, ...args) : f(css, use, $);
         return { name, component: c };
     }
     mod.globalComponents = globalComponents;
@@ -89,17 +79,3 @@
     };
     return mod;
 });
-
-/*
-Usage:
-```
-const style = require('./style.css');
-const other = require('./other.js');
-
-module.exports = mod('This', (css, use, $) => {
-    css(style); // or use(style);
-    use(other);
-    $.other.styledClass(...);
-});
-```
-*/

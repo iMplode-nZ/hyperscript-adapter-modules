@@ -4,6 +4,8 @@
 Assume that hyperscript-adapter and hyperscript-adapter-modules have already been loaded.
 */
 
+'use strict';
+
 // Assert two structures are equal.
 function deepEq(a, b) {
     if (JSON.stringify(a) !== JSON.stringify(b)) {
@@ -36,10 +38,7 @@ const OtherComponent = mod('OtherComponent', (css, use, $) => {
 });
 deepEq(OtherComponent, {
     name: 'OtherComponent',
-    component: [
-        ['div', { className: 'foo-hash' }, ['div', { className: 'bar-hash' }]],
-        {},
-    ],
+    component: [['div', { className: 'foo-hash' }, ['div', { className: 'bar-hash' }]], {}],
 }); // No need to eq SomeComponent.
 mod('___', (css, use, $) => {
     css(stylesheet);
@@ -51,8 +50,7 @@ try {
     });
     throw new Error('Test failed.');
 } catch (e) {
-    if (e.message !== 'Cannot find class name foo.')
-        throw new Error('Test failing test failed.');
+    if (e.message !== 'Cannot find class name foo.') throw new Error('Test failing test failed.');
 }
 const mod2 = HTMLModuleCreator(HTML2, {
     fallbackClasses: true,
@@ -65,14 +63,12 @@ const ComponentA = mod2('component-a', (css, use, $) => {
     return $.div.notInStylesheet();
 });
 // Component A is a function.
-if (!(typeof ComponentA.component === 'function'))
-    throw new Error('Invalid Component');
+if (!(typeof ComponentA.component === 'function')) throw new Error('Invalid Component');
 const ComponentB = mod2('component-b', (css, use, $) => {
     use(ComponentA);
     return $.ComponentA();
 });
-if (!(typeof ComponentB.component()[1] === 'object'))
-    throw new Error('Invalid Component');
+if (!(typeof ComponentB.component()[1] === 'object')) throw new Error('Invalid Component');
 mod.addGlobal(SomeComponent);
 deepEq(
     mod('OtherComponent', (_, __, $) => $.SomeComponent()),
