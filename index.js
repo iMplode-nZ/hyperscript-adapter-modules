@@ -50,6 +50,7 @@
         const css = (a) => Object.entries(s.useDefault ? a.default : a).forEach(([x, y]) => (cssClassNames[x] = y));
         const use = (c) => (components[c.name] = c.component);
         css.classes = cssClassNames;
+        use.components = components;
         const $ = HTML({
             resolvers: {
                 classResolver: (_cl, toKebabCase, opt) => {

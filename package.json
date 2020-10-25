@@ -1,6 +1,6 @@
 {
   "name": "hyperscript-adapter-modules",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A package for modules that use hyperscript-adapter. Supports CSS modules and various CSS in JS tools.",
   "main": "index.js",
   "browser": true,
