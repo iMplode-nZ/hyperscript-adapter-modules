@@ -43,35 +43,38 @@
 
     const globalComponents = Object.create(null);
     function mod(name, f) {
-        // Components is object as it will be public.
-        const components = Object.create(mod.globalComponents);
-        // Same for this.
-        const cssClassNames = Object.create(null);
-        const css = (a) => Object.entries(s.useDefault ? a.default : a).forEach(([x, y]) => (cssClassNames[x] = y));
-        const use = (c) => (components[c.name] = c.component);
-        css.classes = cssClassNames;
-        use.components = components;
-        const $ = HTML({
-            resolvers: {
-                classResolver: (_cl, toKebabCase, opt) => {
-                    const cl = s.hyphenatedClasses ? toKebabCase(_cl) : _cl;
-                    const m = cssClassNames[cl];
-                    if (m === undefined) {
-                        if (s.fallbackClasses) {
-                            return opt.hyphenate.classes ? toKebabCase(_cl) : _cl;
-                        } else {
-                            throw new Error(`Cannot find class name ${cl}.`);
+        function callF(...args) {
+            // Components is object as it will be public.
+            const components = Object.create(mod.globalComponents);
+            // Same for this.
+            const cssClassNames = Object.create(null);
+            const css = (a) => Object.entries(s.useDefault ? a.default : a).forEach(([x, y]) => (cssClassNames[x] = y));
+            const use = (c) => (components[c.name] = c.component);
+            css.classes = cssClassNames;
+            use.components = components;
+            const $ = HTML({
+                resolvers: {
+                    classResolver: (_cl, toKebabCase, opt) => {
+                        const cl = s.hyphenatedClasses ? toKebabCase(_cl) : _cl;
+                        const m = cssClassNames[cl];
+                        if (m === undefined) {
+                            if (s.fallbackClasses) {
+                                return opt.hyphenate.classes ? toKebabCase(_cl) : _cl;
+                            } else {
+                                throw new Error(`Cannot find class name ${cl}.`);
+                            }
                         }
-                    }
-                    return m;
+                        return m;
+                    },
+                    tagResolver: (_tag, toKebabCase, opt) => {
+                        const tag = opt.hyphenate.tag ? toKebabCase(_tag) : _tag;
+                        return components[s.hyphenatedComponents ? tag : _tag] || tag;
+                    },
                 },
-                tagResolver: (_tag, toKebabCase, opt) => {
-                    const tag = opt.hyphenate.tag ? toKebabCase(_tag) : _tag;
-                    return components[s.hyphenatedComponents ? tag : _tag] || tag;
-                },
-            },
-        });
-        const c = s.partialApply ? (...args) => f(css, use, $, ...args) : f(css, use, $);
+            });
+            return f(css, use, $, ...args);
+        }
+        const c = s.partialApply ? callF : callF();
         return { name, component: c };
     }
     mod.globalComponents = globalComponents;
